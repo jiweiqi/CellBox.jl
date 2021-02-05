@@ -16,15 +16,17 @@ end
 
 l_loss_train = []
 l_loss_val = []
+l_loss_test = []
 l_grad = []
 iter = 1
 loss_val_movingavg = Inf
 no_change = 0
 
-cb = function (p, loss_train, loss_val, g_norm)
+cb = function (p, loss_train, loss_val, loss_test, g_norm)
     global l_loss_train, l_loss_val, l_grad, iter
     push!(l_loss_train, loss_train)
     push!(l_loss_val, loss_val)
+    push!(l_loss_test, loss_test)
     push!(l_grad, g_norm)
 
     if iter % n_plot == 0
@@ -37,6 +39,7 @@ cb = function (p, loss_train, loss_val, g_norm)
 
         plt_loss = plot(l_loss_train, yscale=:log10, label="train")
         plot!(plt_loss, l_loss_val, yscale=:log10, label="val")
+        plot!(plt_loss, l_loss_test, yscale=:log10, label="test")
         plt_grad = plot(l_grad, yscale=:log10, label="grad_norm")
         xlabel!(plt_loss, "Epoch")
         xlabel!(plt_grad, "Epoch")

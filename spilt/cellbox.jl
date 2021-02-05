@@ -10,7 +10,9 @@ batch_size = 8;  # STEER
 
 n_exp_train = 20;
 n_exp_val = 10;
-n_exp = n_exp_train + n_exp_val;
+n_exp_test = 10;
+
+n_exp = n_exp_train + n_exp_val + n_exp_test;
 noise = 0.01;
 opt = ADAMW(5.f-3, (0.9, 0.999), 1.f-4);
 
