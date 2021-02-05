@@ -10,7 +10,7 @@ cbi = function (p, i_exp)
         push!(l_plt, plt)
     end
     plt_all = plot(l_plt..., legend=false, size=(1000, 1000));
-    png(plt_all, string("figs/i_exp_", i_exp))
+    png(plt_all, string(fig_path, "/i_exp_", i_exp))
     return false
 end
 
@@ -41,15 +41,15 @@ cb = function (p, loss_train, loss_val, g_norm)
         ylabel!(plt_grad, "Gradient Norm")
         # ylims!(plt_loss, (-Inf, 1))
         plt_all = plot([plt_loss, plt_grad]..., legend=:top)
-        png(plt_all, "figs/loss_grad")
+        png(plt_all, string(fig_path, "/loss_grad"))
 
-        @save "./checkpoint/mymodel.bson" p opt l_loss_train l_loss_val l_grad iter;
+        @save string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_grad iter;
     end
     iter += 1;
 end
 
 if is_restart
-    @load "./checkpoint/mymodel.bson" p opt l_loss_train l_loss_val l_grad iter;
+    @load string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_grad iter;
     iter += 1;
 end
 

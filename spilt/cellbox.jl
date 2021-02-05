@@ -1,7 +1,8 @@
+is_restart = false;
+expr_name = "Test_01";
 include("header.jl")
 
 # Arguments
-is_restart = false;
 n_epoch = 10000;
 n_plot = 20;  # frequency of callback
 
