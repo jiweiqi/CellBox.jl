@@ -18,6 +18,9 @@ l_loss_train = []
 l_loss_val = []
 l_grad = []
 iter = 1
+loss_val_movingavg = Inf
+no_change = 0
+
 cb = function (p, loss_train, loss_val, g_norm)
     global l_loss_train, l_loss_val, l_grad, iter
     push!(l_loss_train, loss_train)
@@ -54,17 +57,18 @@ if is_restart
 end
 
 checkconvergence = function ()
-    is_stop = false
     # TODO: write in log file rather than saved in RAM
-    # loss_val_movingavg_new = loss_val[end-n_iter_buffer:end]  # TODO: no check bounds
-    # if iter > n_iter_burnin & loss_val_movingavg > loss_val_movingavg_new
-    #     no_change += 1
-    #     if no_change > n_iter_tol | iter > n_iter_max
-    #         # TODO: end training
-    #         # maybe return a boolean for cb() and end in the main for loop
-    #     end
-    # else
-    #     loss_val_movingavg = loss_val_movingavg_new
-    # end
-    return is_stop
+    global loss_val_movingavg, no_change
+    loss_val_movingavg_new = mean(l_loss_val[max(1, end-n_iter_buffer):end])  # TODO: no check bounds
+
+    if (iter > n_iter_burnin) & (loss_val_movingavg < loss_val_movingavg_new)
+        no_change += 1
+        if (no_change > n_iter_tol) | (iter > n_iter_max)
+            return true
+        end
+    else
+        no_change = 0
+        loss_val_movingavg = loss_val_movingavg_new
+    end
+    return false
 end

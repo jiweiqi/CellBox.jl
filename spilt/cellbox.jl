@@ -3,9 +3,6 @@ expr_name = "Test_01";
 include("header.jl")
 
 # Arguments
-n_epoch = 10000;
-n_plot = 20;  # frequency of callback
-
 ns = 5;  # number of nodes / species
 tfinal = 20.0;
 ntotal = 20;  # number of samples for each perturbation
@@ -18,11 +15,11 @@ noise = 0.01;
 opt = ADAMW(5.f-3, (0.9, 0.999), 1.f-4);
 
 n_iter_max = 1000
+n_plot = 20;  # frequency of callback
 n_iter_buffer = 50
 n_iter_burnin = 100
 n_iter_tol = 10
-convergence_tol = 1e-5
-loss_val_movingavg = Inf
+convergence_tol = 1e-8
 
 # Generate data sets
 # μ_list = rand(n_exp, ns);  #random sampling
