@@ -1,3 +1,24 @@
+function gen_network(m; weight_params=(-1., 1.), sparsity=0., drop_range=(-1e-1, 1e-1))
+
+    # uniform random for W matrix
+    w = rand(Uniform(weight_params[1], weight_params[2]), (m, m))
+
+    # Drop small values
+    @inbounds for i in eachindex(w)
+        w[i] = ifelse(drop_range[1]<=w[i]<=drop_range[2], 0, w[i])
+    end
+
+    # Add sparsity
+    p = [sparsity, 1 - sparsity]
+    w .*= sample([0, 1], weights(p), (m, m), replace=true)
+
+    # Add α vector
+    α = abs.(rand(Uniform(weight_params[1], weight_params[2]), (m)))
+
+    return hcat(α, w)
+end
+
+
 function show_network(p)
     println("p_gold")
     show(stdout, "text/plain", round.(p_gold, digits=2))

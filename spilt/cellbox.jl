@@ -25,23 +25,12 @@ convergence_tol = 1e-8
 # μ_list = rand(n_exp, ns);  #random sampling
 μ_list = randomLHC(n_exp, ns) ./ n_exp;  # random LHS sampling
 # TODO: sparsity for μ_list too
-# TODO: hypertube  sampling
+# TODO: negative μ?
 
-function gen_network(m; weight_params=(0., 1.), sparsity=0.)
-    # TODO: network constraints: range and zeros
-    w = rand(Uniform(weight_params[1], weight_params[2]), (m, m))
-    p = [sparsity, 1 - sparsity]
-    w .*= sample([0, 1], weights(p), (m, m), replace=true)
-    α = abs.(rand(Uniform(weight_params[1], weight_params[2]), (m)))
-    return hcat(α, w)
-end
-
-p_gold = gen_network(ns; weight_params=(0.0, 1.0), sparsity=0.9);
-p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0);
+p_gold = gen_network(ns, weight_params=(-1.0, 1.0), sparsity=0.9, drop_range=(-0.1, 0.1))
+p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0)
+# show_network(p)
 
 include("network.jl")
 include("callback.jl")
-# opt = ADAMW(1.f-4, (0.9, 0.999), 1.f-6);
 include("train.jl")
-
-# show_network(p) # TODO: a network inference loss
