@@ -23,14 +23,20 @@ n_iter_burnin = 100
 n_iter_tol = 10
 convergence_tol = 1e-8
 
+Random.seed!(1);
+
 # Generate data sets
 # μ_list = rand(n_exp, ns);  #random sampling
 μ_list = randomLHC(n_exp, ns) ./ n_exp;  # random LHS sampling
-# TODO: sparsity for μ_list too
+nμ = 3;
+for i in 1:n_exp
+    ind_zero = randperm(ns)[nμ + 1:ns]
+    μ_list[i, ind_zero] .= 0
+end
 # TODO: negative μ?
 
-p_gold = gen_network(ns, weight_params=(-1.0, 1.0), sparsity=0.9, drop_range=(-0.1, 0.1))
-p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0)
+p_gold = gen_network(ns, weight_params=(-1.0, 1.0), sparsity=0.9, drop_range=(-0.1, 0.1));
+p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0);
 # show_network(p)
 
 include("network.jl")
