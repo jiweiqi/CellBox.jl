@@ -6,6 +6,7 @@ using LinearAlgebra, Statistics
 using ProgressBars, Printf
 using Flux.Optimise: update!, ExpDecay
 using Flux.Losses: mae
+using Distances
 using Distributions
 using StatsBase
 using BSON: @save, @load
@@ -14,11 +15,11 @@ Random.seed!(1234);
 
 # Arguments
 is_restart = false;
-n_epoch = 10000;
+n_epoch = 1000;
 n_plot = 20;  # frequency of callback
 alg = Tsit5();
 
-ns = 100;  # number of nodes / species
+ns = 20;  # number of nodes / species
 tfinal = 20.0;
 ntotal = 20;  # number of samples for each perturbation
 batch_size = 8;  # STEER
@@ -46,18 +47,9 @@ function gen_network(m; weight_params=(0., 1.), sparsity=0.)
     return hcat(α, w)
 end
 
-function show_network(p)
-    println("p_gold")
-    show(stdout, "text/plain", round.(p_gold, digits=2))
-    println("\np_learned")
-    show(stdout, "text/plain", round.(p, digits=2))
-end
-
 u0 = zeros(ns);
 p_gold = gen_network(ns; weight_params=(0.0, 1.0), sparsity=0.9);
 p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0);
-
-# show_network(p)
 
 function cellbox!(du, u, p, t)
     du .= tanh.(view(p, :, 2:ns + 1) * u - μ) - view(p, :, 1) .* u
@@ -105,6 +97,14 @@ function loss_neuralode(p, i_exp=1, batch=ntotal)
 end
 loss_neuralode(p, 1)
 
+function loss_network(p)
+    # distalpha = cosine_dist(p_gold[:,1],p[:,1])
+    # distw = cosine_dist(p_gold[:,2:end],p[:,2:end])
+    coralpha = cor(p_gold[:,1],p[:,1])
+    corw = cor([p_gold[:,2:end]...],[p[:,2:end]...])
+    return coralpha, corw
+end
+
 cbi = function (p, i_exp)
     ode_data = ode_data_list[i_exp, :, :]
     pred = predict_neuralode(u0, p, i_exp)
@@ -124,12 +124,14 @@ end
 l_loss_train = []
 l_loss_val = []
 l_grad = []
+l_loss_network = []
 iter = 1
-cb = function (p, loss_train, loss_val, g_norm)
-    global l_loss_train, l_loss_val, l_grad, iter
+cb = function (p, loss_train, loss_val, g_norm, loss_p)
+    global l_loss_train, l_loss_val, l_grad, l_loss_network, iter
     push!(l_loss_train, loss_train)
     push!(l_loss_val, loss_val)
     push!(l_grad, g_norm)
+    push!(l_loss_network, loss_p)
     # TODO: write in log file rather than saved in RAM
     loss_val_movingavg_new = loss_val[end-n_iter_buffer:end]  # TODO: no check bounds
     if iter > n_iter_burnin & loss_val_movingavg > loss_val_movingavg_new
@@ -153,15 +155,19 @@ cb = function (p, loss_train, loss_val, g_norm)
         plt_loss = plot(l_loss_train, yscale=:log10, label="train")
         plot!(plt_loss, l_loss_val, yscale=:log10, label="val")
         plt_grad = plot(l_grad, yscale=:log10, label="grad_norm")
+        plt_p = plot([l_loss_network[i][1] for i in 1:length(l_loss_network)], label="alpha")
+        plot!(plt_p, [l_loss_network[i][2] for i in 1:length(l_loss_network)], label="w")
         xlabel!(plt_loss, "Epoch")
         xlabel!(plt_grad, "Epoch")
+        xlabel!(plt_p, "Epoch")
         ylabel!(plt_loss, "Loss")
         ylabel!(plt_grad, "Gradient Norm")
+        ylabel!(plt_p, "Parameter correlation")
         # ylims!(plt_loss, (-Inf, 1))
-        plt_all = plot([plt_loss, plt_grad]..., legend=:top)
+        plt_all = plot([plt_loss, plt_grad, plt_p]..., legend=:top)
         png(plt_all, "figs/loss_grad")
 
-        @save "./checkpoint/mymodel.bson" p opt l_loss_train l_loss_val l_grad iter;
+        @save "./checkpoint/mymodel.bson" p opt l_loss_train l_loss_val l_grad l_loss_network iter;
     end
     iter += 1;
 end
@@ -192,8 +198,9 @@ for epoch in epochs
     loss_train = mean(loss_epoch[1:n_exp_train]);
     loss_val = mean(loss_epoch[n_exp_train + 1:end]);
     g_norm = mean(grad_norm)
+    loss_p = loss_network(p)
     set_description(epochs, string(@sprintf("Loss train %.4e lr %.1e", loss_train, opt[1].eta)))
-    cb(p, loss_train, loss_val, g_norm);
+    cb(p, loss_train, loss_val, g_norm, loss_p);
 end
 
 for i_exp in 1:n_exp
