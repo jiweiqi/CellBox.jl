@@ -26,6 +26,15 @@ function show_network(p)
     show(stdout, "text/plain", round.(p, digits=2))
 end
 
+function loss_network(p)
+     # distalpha = cosine_dist(p_gold[:,1],p[:,1])
+     # distw = cosine_dist(p_gold[:,2:end],p[:,2:end])
+     coralpha = cor(p_gold[:,1],p[:,1])
+     corw = cor([p_gold[:,2:end]...],[p[:,2:end]...])
+     return coralpha, corw
+ end
+
+
 function cellbox!(du, u, p, t)
     du .= tanh.(view(p, :, 2:ns + 1) * u - μ) - view(p, :, 1) .* u
 end

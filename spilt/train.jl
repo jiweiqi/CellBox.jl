@@ -16,8 +16,10 @@ for epoch in epochs
     loss_val = mean(loss_epoch[n_exp_train+1 : n_exp_train+n_exp_val]);
     loss_test = mean(loss_epoch[n_exp_train+n_exp_val+1:end]);
     g_norm = mean(grad_norm)
+    loss_p = loss_network(p)
+
     set_description(epochs, string(@sprintf("Loss train %.4e Tolerance %d/%d", loss_train, no_change, n_iter_tol)))
-    cb(p, loss_train, loss_val, loss_test, g_norm);
+    cb(p, loss_train, loss_val, loss_test, g_norm, loss_p);
 
     if checkconvergence()
         break
