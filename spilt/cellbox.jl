@@ -3,7 +3,7 @@ expr_name = "Test_01";
 include("header.jl")
 
 # Arguments
-ns = 5;  # number of nodes / species
+ns = 20;  # number of nodes / species
 tfinal = 20.0;
 ntotal = 20;  # number of samples for each perturbation
 batch_size = 8;  # STEER
@@ -14,7 +14,7 @@ n_exp_test = 10;
 
 n_exp = n_exp_train + n_exp_val + n_exp_test;
 noise = 0.01;
-opt = ADAMW(5.f-3, (0.9, 0.999), 1.f-4);
+opt = ADAMW(1.f-3, (0.9, 0.999), 1.f-4);
 
 n_iter_max = 1000
 n_plot = 20;  # frequency of callback
