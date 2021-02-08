@@ -35,10 +35,6 @@ for i in 1:n_exp
 end
 # TODO: negative μ?
 
-p_gold = gen_network(ns, weight_params=(-1.0, 1.0), sparsity=0.9, drop_range=(-0.1, 0.1));
-p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0);
-# show_network(p)
-
 include("network.jl")
 include("callback.jl")
 include("train.jl")
