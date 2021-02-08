@@ -14,6 +14,17 @@ cbi = function (p, i_exp)
     return false
 end
 
+cbp = function (p, iter)
+    plt_alpha = scatter(p_gold[:,1],p[:,1])
+    xlabel!("ground truth alpha")
+    ylabel!("inferred alpha")
+    plt_w = scatter([p_gold[:,2:end]...],[p[:,2:end]...])
+    xlabel!("ground truth w")
+    ylabel!("inferred w")
+    plt_p = plot([plt_alpha, plt_w]..., legend=false, layout = grid(1, 2), size=(850, 400))
+    png(plt_p, string(fig_path, "/p_inference_iter", iter))
+end
+
 l_loss_train = []
 l_loss_val = []
 l_loss_test = []

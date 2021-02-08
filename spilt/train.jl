@@ -29,3 +29,5 @@ end
 for i_exp in 1:n_exp
     cbi(p, i_exp)
 end
+
+cbp(p, iter)
