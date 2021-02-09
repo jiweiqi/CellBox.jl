@@ -40,7 +40,7 @@ function loss_network(p)
  end
 
 function cellbox!(du, u, p, t)
-    du .= @view(p[:, 1]) .* tanh.(@view(p[]:, 2:end]) * u - μ) .- u
+    du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
 end
 
 tspan = (0, tfinal);
