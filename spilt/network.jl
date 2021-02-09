@@ -18,7 +18,9 @@ function gen_network(m; weight_params=(-1., 1.), sparsity=0., drop_range=(-1e-1,
     return hcat(α, w)
 end
 
-p_gold = gen_network(ns, weight_params=(-1.0, 1.0), sparsity=0.6, drop_range=(-0.1, 0.1));
+p_gold = gen_network(ns, weight_params=(-1.0, 1.0),
+                     sparsity=Float64(conf["sparsity"]),
+                     drop_range=(Float64(conf["drop_range"]["lb"]), Float64(conf["drop_range"]["ub"])));
 p = gen_network(ns; weight_params=(0.0, 0.01), sparsity=0);
 # show_network(p)
 

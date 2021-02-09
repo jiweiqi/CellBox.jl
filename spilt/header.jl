@@ -13,15 +13,8 @@ using BSON: @save, @load
 
 cd(dirname(@__DIR__))
 
-if ispath("figs") == false
-    mkdir("figs")
-end
-if ispath("checkpoint") == false
-    mkdir("checkpoint")
-end
-
-fig_path = string("figs/", expr_name)
-ckpt_path = string("checkpoint/", expr_name)
+fig_path = string(expr_name, "/figs")
+ckpt_path = string(expr_name, "/checkpoint")
 
 if ispath(fig_path) == false
     mkdir(fig_path)
