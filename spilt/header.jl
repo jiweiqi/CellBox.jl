@@ -21,6 +21,7 @@ if ispath(fig_path) == false
 else
     if !is_restart
         rm(fig_path, recursive=true)
+        mkdir(fig_path)
     end
 end
 
@@ -29,5 +30,6 @@ if ispath(ckpt_path) == false
 else
     if !is_restart
         rm(ckpt_path, recursive=true)
+        mkdir(fig_path)
     end
 end
