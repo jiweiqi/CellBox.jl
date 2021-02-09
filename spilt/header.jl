@@ -16,20 +16,20 @@ cd(dirname(@__DIR__))
 fig_path = string(expr_name, "/figs")
 ckpt_path = string(expr_name, "/checkpoint")
 
+if !is_restart
+    if ispath(fig_path)
+        rm(fig_path, recursive=true)
+    end
+    if ispath(ckpt_path)
+        rm(ckpt_path, recursive=true)
+    end
+end
+
+
 if ispath(fig_path) == false
     mkdir(fig_path)
-else
-    if !is_restart
-        rm(fig_path, recursive=true)
-        mkdir(fig_path)
-    end
 end
 
 if ispath(ckpt_path) == false
     mkdir(ckpt_path)
-else
-    if !is_restart
-        rm(ckpt_path, recursive=true)
-        mkdir(fig_path)
-    end
 end

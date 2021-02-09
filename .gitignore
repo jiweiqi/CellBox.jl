@@ -27,3 +27,4 @@ Manifest.toml
 figs/
 checkpoint/
 Test_*
+.DS_Store
