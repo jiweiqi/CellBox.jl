@@ -38,7 +38,7 @@ Random.seed!(1);
 nμ = Int64(conf["n_mu"])
 for i = 1:n_exp
     nonzeros = findall(μ_list[i, :].>0)
-    ind_zero = sample(nonzeros, length(nonzeros)-nμ, replace=false)
+    ind_zero = sample(nonzeros, max(0, length(nonzeros)-nμ), replace=false)
     μ_list[i, ind_zero] .= 0
 end
 # TODO: negative μ?
