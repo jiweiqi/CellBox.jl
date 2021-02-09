@@ -37,7 +37,8 @@ Random.seed!(1);
 μ_list = randomLHC(n_exp, ns) ./ n_exp;  # random LHS sampling
 nμ = Int64(conf["n_mu"])
 for i = 1:n_exp
-    ind_zero = randperm(ns)[nμ+1:ns]
+    nonzeros = findall(μ_list[i, :].>0)
+    ind_zero = sample(nonzeros, length(nonzeros)-nμ, replace=false)
     μ_list[i, ind_zero] .= 0
 end
 # TODO: negative μ?
