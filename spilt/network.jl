@@ -13,7 +13,7 @@ function gen_network(m; weight_params=(-1., 1.), sparsity=0., drop_range=(-1e-1,
     w .*= sample([0, 1], weights(p), (m, m), replace=true)
 
     # Add α vector
-    α = abs.(rand(Uniform(weight_params[1], weight_params[2]), (m)))
+    α = abs.(rand(Uniform(weight_params[1], weight_params[2]), (m))) .+ 0.5
 
     return hcat(α, w)
 end
@@ -39,9 +39,8 @@ function loss_network(p)
      return coralpha, corw
  end
 
-
 function cellbox!(du, u, p, t)
-    du .= tanh.(view(p, :, 2:ns + 1) * u - μ) - view(p, :, 1) .* u
+    du .= @view(p[:, 1]) .* tanh.(@view(p[]:, 2:end]) * u - μ) .- u
 end
 
 tspan = (0, tfinal);
@@ -70,7 +69,8 @@ yscale = maximum(hcat(yscale_list...), dims=2);
 function predict_neuralode(u0, p, i_exp=1, batch=ntotal)
     global μ = μ_list[i_exp, 1:ns]
     _prob = remake(prob, p=p, tspan=[0, ts[batch]])
-    pred = Array(solve(_prob, Tsit5(), saveat=ts[1:batch], sensealg=InterpolatingAdjoint()))
+    pred = Array(solve(_prob, Tsit5(), saveat=ts[1:batch],
+                 sensealg=InterpolatingAdjoint()))
     return pred
 end
 predict_neuralode(u0, p, 1);
