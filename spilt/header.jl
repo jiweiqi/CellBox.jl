@@ -28,6 +28,7 @@ end
 
 if ispath(fig_path) == false
     mkdir(fig_path)
+    mkdir(string(fig_path, "/conditions"))
 end
 
 if ispath(ckpt_path) == false

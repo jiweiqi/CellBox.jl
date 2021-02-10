@@ -10,7 +10,7 @@ cbi = function (p, i_exp)
         push!(l_plt, plt)
     end
     plt_all = plot(l_plt..., legend=false, size=(1000, 1000));
-    png(plt_all, string(fig_path, "/i_exp_", i_exp))
+    png(plt_all, string(fig_path, "/conditions/i_exp_", i_exp))
     return false
 end
 
@@ -73,7 +73,7 @@ cb = function (p, loss_train, loss_val, loss_test, g_norm, loss_p)
 end
 
 if is_restart
-    @load string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_grad iter;
+    @load string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_grad iter l_loss_test l_loss_network;
     iter += 1;
 end
 
