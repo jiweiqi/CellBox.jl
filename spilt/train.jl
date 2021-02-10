@@ -30,4 +30,5 @@ for i_exp in 1:n_exp
     cbi(p, i_exp)
 end
 
+rm(string(fig_path, "/p_inference_iter_tracking.png"))
 cbp(p, iter)

@@ -66,6 +66,7 @@ cb = function (p, loss_train, loss_val, loss_test, g_norm, loss_p)
         # ylims!(plt_loss, (-Inf, 1))
         plt_all = plot([plt_loss, plt_grad, plt_p]..., legend=:top, layout = grid(3, 1), size=(600, 900))
         png(plt_all, string(fig_path, "/loss_grad"))
+        cbp(p, "_tracking")
 
         @save string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_loss_test l_grad l_loss_network iter;
     end
