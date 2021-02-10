@@ -3,7 +3,13 @@ loss_epoch = zeros(Float32, n_exp);
 grad_norm = zeros(Float32, n_exp_train);
 for epoch in epochs
     global p
-    for i_exp in randperm(n_exp_train)
+    if conf["epoch_size"] != -1
+        epoch_samples = sample(1:n_exp_train, conf["epoch_size"], replace=false)
+    else
+        epoch_samples = 1:n_exp_train
+    end
+    for i_exp in epoch_samples
+    # for i_exp in randperm(n_exp_train)
         batch = rand(batch_size:ntotal)
         grad = Zygote.gradient(x -> loss_neuralode(x, i_exp, batch), p)[1]
         grad_norm[i_exp] = norm(grad, 2)
@@ -30,5 +36,6 @@ for i_exp in 1:n_exp
     cbi(p, i_exp)
 end
 
-rm(string(fig_path, "/p_inference_iter_tracking.png"))
+if ispath(string(fig_path, "/p_inference_iter_tracking.png"))
+    rm(string(fig_path, "/p_inference_iter_tracking.png"))
 cbp(p, iter)
