@@ -12,8 +12,8 @@ s = ArgParseSettings()
         action = :store_true
 end
 parsed_args = parse_args(ARGS, s)
-expr_name = parsed_args['expr_name']
-is_restart = parsed_args['is_restart']
+expr_name = parsed_args["expr_name"]
+is_restart = parsed_args["is-restart"]
 if is_restart
     println("Continue to run $expr_name ...\n")
 else
