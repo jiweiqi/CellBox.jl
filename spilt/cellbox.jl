@@ -1,13 +1,3 @@
-using YAML
-
-if !(@isdefined expr_name) | !(ispath(expr_name))
-    error("Variable expr_name not specified \n or the folder does not exist\n")
-end
-println("runing $expr_name ...\n")
-
-conf = YAML.load_file("$expr_name/config.yaml")
-is_restart = Bool(conf["is_restart"])
-
 include("header.jl")
 
 ns = Int64(conf["ns"]); # number of nodes / species

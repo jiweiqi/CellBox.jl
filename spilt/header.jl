@@ -1,3 +1,26 @@
+using ArgParse
+s = ArgParseSettings()
+@add_arg_table s begin
+    "--disable-display"
+        help = "Use for UNIX server"
+        action = :store_true
+    "--expr_name"
+        help = "Define expr name"
+        required = true
+    "--is-restart"
+        help = "Continue training?"
+        action = :store_true
+end
+parsed_args = parse_args(ARGS, s)
+expr_name = parsed_args['expr_name']
+is_restart = parsed_args['is_restart']
+if is_restart
+    println("Continue to run $expr_name ...\n")
+else
+    println("Runing $expr_name ...\n")
+end
+
+
 using OrdinaryDiffEq, Flux, Optim, Random, Plots
 using DiffEqSensitivity
 using Zygote
@@ -10,17 +33,10 @@ using Distributions
 using StatsBase
 using LatinHypercubeSampling
 using BSON: @save, @load
-using ArgParse
+using YAML
+
 cd(dirname(@__DIR__))
-s = ArgParseSettings()
-
-@add_arg_table s begin
-    "--disable-display"
-        help = "Use for UNIX server"
-        action = :store_true
-end
-parsed_args = parse_args(ARGS, s)
-
+conf = YAML.load_file("$expr_name/config.yaml")
 fig_path = string(expr_name, "/figs")
 ckpt_path = string(expr_name, "/checkpoint")
 
