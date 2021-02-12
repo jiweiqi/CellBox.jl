@@ -43,7 +43,7 @@ cb = function (p, loss_train, loss_val, loss_test, g_norm, loss_p)
     push!(l_loss_network, loss_p)
     push!(l_grad, g_norm)
 
-    if iter % n_plot == 0
+    if iter % n_plot == 0 & parsed_args['disable-display']
 
         l_exp = randperm(n_exp)[1:1]
         println("update plot for ", l_exp)

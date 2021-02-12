@@ -10,8 +10,16 @@ using Distributions
 using StatsBase
 using LatinHypercubeSampling
 using BSON: @save, @load
-
+using ArgParse
 cd(dirname(@__DIR__))
+s = ArgParseSettings()
+
+@add_arg_table s begin
+    "--disable-display"
+        help = "Use for UNIX server"
+        action = :store_true
+end
+parsed_args = parse_args(ARGS, s)
 
 fig_path = string(expr_name, "/figs")
 ckpt_path = string(expr_name, "/checkpoint")

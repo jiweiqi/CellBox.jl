@@ -32,10 +32,12 @@ for epoch in epochs
     end
 end
 
-for i_exp in 1:n_exp
-    cbi(p, i_exp)
-end
+if parsed_args['disable-display']
+    for i_exp in 1:n_exp
+        cbi(p, i_exp)
+    end
 
-if ispath(string(fig_path, "/p_inference_iter_tracking.png"))
-    rm(string(fig_path, "/p_inference_iter_tracking.png"))
-cbp(p, iter)
+    if ispath(string(fig_path, "/p_inference_iter_tracking.png"))
+        rm(string(fig_path, "/p_inference_iter_tracking.png"))
+    cbp(p, iter)
+end
