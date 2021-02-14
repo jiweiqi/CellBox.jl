@@ -46,7 +46,7 @@ cb = function (p, loss_train, loss_val, loss_test, g_norm, loss_p)
 
     if (iter % n_plot == 0)
         if parsed_args["disable-display"]
-            println([iter l_loss_train l_loss_val l_loss_test l_grad l_loss_network])
+            println([iter loss_train loss_val loss_test g_norm loss_p])
         else
             l_exp = randperm(n_exp)[1:1]
             println("update plot for ", l_exp)
