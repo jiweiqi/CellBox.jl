@@ -39,5 +39,6 @@ if !parsed_args["disable-display"]
 
     if ispath(string(fig_path, "/p_inference_iter_tracking.png"))
         rm(string(fig_path, "/p_inference_iter_tracking.png"))
+    end
     cbp(p, iter)
 end
