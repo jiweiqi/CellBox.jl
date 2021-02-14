@@ -32,7 +32,7 @@ for epoch in epochs
     end
 end
 
-if parsed_args["disable-display"]
+if !parsed_args["disable-display"]
     for i_exp in 1:n_exp
         cbi(p, i_exp)
     end
