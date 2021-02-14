@@ -42,33 +42,35 @@ cb = function (p, loss_train, loss_val, loss_test, g_norm, loss_p)
     push!(l_loss_test, loss_test)
     push!(l_loss_network, loss_p)
     push!(l_grad, g_norm)
+    @save string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_loss_test l_grad l_loss_network iter
 
-    if (iter % n_plot == 0) & (!parsed_args["disable-display"])
+    if (iter % n_plot == 0)
+        if parsed_args["disable-display"]
+            println(iter l_loss_train l_loss_val l_loss_test l_grad l_loss_network)
+        else
+            l_exp = randperm(n_exp)[1:1]
+            println("update plot for ", l_exp)
+            for i_exp in l_exp
+                cbi(p, i_exp)
+            end
 
-        l_exp = randperm(n_exp)[1:1]
-        println("update plot for ", l_exp)
-        for i_exp in l_exp
-            cbi(p, i_exp)
+            plt_loss = plot(l_loss_train, yscale=:log10, label="train")
+            plot!(plt_loss, l_loss_val, yscale=:log10, label="val")
+            plot!(plt_loss, l_loss_test, yscale=:log10, label="test")
+            plt_grad = plot(l_grad, yscale=:log10, label="grad_norm")
+            plt_p = plot([l_loss_network[i][1] for i in 1:length(l_loss_network)], label="alpha")
+            plot!(plt_p, [l_loss_network[i][2] for i in 1:length(l_loss_network)], label="w")
+            xlabel!(plt_loss, "Epoch")
+            xlabel!(plt_grad, "Epoch")
+            xlabel!(plt_p, "Epoch")
+            ylabel!(plt_loss, "Loss")
+            ylabel!(plt_grad, "Gradient Norm")
+            ylabel!(plt_p, "Parameter correlation")
+            # ylims!(plt_loss, (-Inf, 1))
+            plt_all = plot([plt_loss, plt_grad, plt_p]..., legend=:top, layout = grid(3, 1), size=(600, 900))
+            png(plt_all, string(fig_path, "/loss_grad"))
+            cbp(p, "_tracking")
         end
-
-        plt_loss = plot(l_loss_train, yscale=:log10, label="train")
-        plot!(plt_loss, l_loss_val, yscale=:log10, label="val")
-        plot!(plt_loss, l_loss_test, yscale=:log10, label="test")
-        plt_grad = plot(l_grad, yscale=:log10, label="grad_norm")
-        plt_p = plot([l_loss_network[i][1] for i in 1:length(l_loss_network)], label="alpha")
-        plot!(plt_p, [l_loss_network[i][2] for i in 1:length(l_loss_network)], label="w")
-        xlabel!(plt_loss, "Epoch")
-        xlabel!(plt_grad, "Epoch")
-        xlabel!(plt_p, "Epoch")
-        ylabel!(plt_loss, "Loss")
-        ylabel!(plt_grad, "Gradient Norm")
-        ylabel!(plt_p, "Parameter correlation")
-        # ylims!(plt_loss, (-Inf, 1))
-        plt_all = plot([plt_loss, plt_grad, plt_p]..., legend=:top, layout = grid(3, 1), size=(600, 900))
-        png(plt_all, string(fig_path, "/loss_grad"))
-        cbp(p, "_tracking")
-
-        @save string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_loss_test l_grad l_loss_network iter;
     end
     iter += 1;
 end
