@@ -18,11 +18,12 @@ parsed_args = parse_args(ARGS, s)
 
 if parsed_args["expr_name"] != nothing
     expr_name = parsed_args["expr_name"]
+    is_restart = parsed_args["is-restart"]
 else
     runtime = YAML.load_file("./runtime.yaml")
     expr_name = runtime["expr_name"]
+    is_restart = Bool(runtime["is_restart"]
 end
-is_restart = parsed_args["is-restart"] | Bool(runtime["is_restart"])
 conf = YAML.load_file("$expr_name/config.yaml")
 
 
