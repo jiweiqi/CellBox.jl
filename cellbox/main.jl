@@ -35,4 +35,9 @@ end
 
 include("network.jl")
 include("callback.jl")
+
+if is_restart && (conf["lr_new"] > 0)
+    opt[1].eta = Float64(conf["lr_new"])
+end
+
 include("train.jl")

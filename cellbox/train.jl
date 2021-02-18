@@ -24,7 +24,8 @@ for epoch in epochs
     g_norm = mean(grad_norm)
     loss_p = loss_network(p)
 
-    set_description(epochs, string(@sprintf("Loss train %.4e Tolerance %d/%d", loss_train, no_change, n_iter_tol)))
+    set_description(epochs, string(@sprintf("Loss train %.4e tol %d/%d lr %.1e",
+                            loss_train, no_change, n_iter_tol, opt[1].eta)))
     cb(p, loss_train, loss_val, loss_test, g_norm, loss_p);
 
     if checkconvergence()
