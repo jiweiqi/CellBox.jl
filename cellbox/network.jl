@@ -59,7 +59,7 @@ for i = 1:n_exp
     global μ = μ_list[i, 1:ns]
     ode_data = Array(solve(prob, Tsit5(), u0=u0, p=p_gold))
 
-    ode_data += randn(size(ode_data)) .* ode_data .* noise
+    ode_data += randn(size(ode_data)) .* noise
     ode_data_list[i, :, :] = ode_data
 
     push!(yscale_list, max_min(ode_data))
