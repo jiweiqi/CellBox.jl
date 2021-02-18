@@ -53,7 +53,7 @@ function cellbox!(du, u, p, t)
 end
 
 tspan = (0, tfinal);
-ts = 0:tspan[2] / ntotal:tspan[2];
+ts = 0:tspan[2]/ntotal:tspan[2];
 ts = ts[2:end];
 u0 = zeros(ns);
 prob = ODEProblem(cellbox!, u0, tspan, saveat=ts);
@@ -75,11 +75,16 @@ for i = 1:n_exp
 end
 yscale = maximum(hcat(yscale_list...), dims=2);
 
-function predict_neuralode(u0, p, i_exp=1, batch=ntotal)
+function predict_neuralode(u0, p, i_exp=1, batch=ntotal, saveat=true)
     global μ = μ_list[i_exp, 1:ns]
-    _prob = remake(prob, p=p, tspan=[0, ts[batch]])
-    pred = Array(solve(_prob, Tsit5(), saveat=ts[1:batch],
-                 sensealg=InterpolatingAdjoint()))
+    if saveat
+        _prob = remake(prob, p=p, tspan=[0, ts[batch]])
+        pred = Array(solve(_prob, Tsit5(), saveat=ts[1:batch],
+                     sensealg=InterpolatingAdjoint()))
+    else # for full trajectory plotting
+        _prob = remake(prob, p=p, tspan=[0, ts[end]])
+        pred = Array(solve(_prob, Tsit5(), saveat=0:ts[end]/nplot:ts[end]))
+    end
     return pred
 end
 predict_neuralode(u0, p, 1);

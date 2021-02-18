@@ -3,6 +3,7 @@ include("header.jl")
 ns = Int64(conf["ns"]); # number of nodes / species
 tfinal = Float64(conf["tfinal"]);
 ntotal = Int64(conf["ntotal"]);  # number of samples for each perturbation
+nplot = Int64(conf["nplot"]);
 batch_size = Int64(conf["batch_size"]);  # STEER
 
 n_exp_train = Int64(conf["n_exp_train"]);

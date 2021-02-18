@@ -1,10 +1,11 @@
 cbi = function (p, i_exp)
     ode_data = ode_data_list[i_exp, :, :]
-    pred = predict_neuralode(u0, p, i_exp)
+    _ts = 0:ts[end]/nplot:ts[end]
+    pred = predict_neuralode(u0, p, i_exp, nothing, false)
     l_plt = []
     for i in 1:minimum([10, ns])
         plt = scatter(ts, ode_data[i,:], label="data");
-        plot!(plt, ts, pred[i,:], label="pred");
+        plot!(plt, _ts, pred[i,:], label="pred");
         ylabel!(plt, "x$i")
         xlabel!(plt, "Time")
         push!(l_plt, plt)
@@ -18,6 +19,8 @@ cbp = function (p, iter)
     plt_alpha = scatter(p_gold[:,1],p[:,1])
     xlabel!("ground truth alpha")
     ylabel!("inferred alpha")
+    xlims!(0.5, 1.5)
+    ylims!(0.5, 1.5)
     plt_w = scatter([p_gold[:,2:end]...],[p[:,2:end]...])
     xlabel!("ground truth w")
     ylabel!("inferred w")
