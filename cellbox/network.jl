@@ -43,13 +43,13 @@ end
 function loss_network(p)
      # distalpha = cosine_dist(p_gold[:,1],p[:,1])
      # distw = cosine_dist(p_gold[:,2:end],p[:,2:end])
-     coralpha = cor(p_gold[:,1],p[:,1])
-     corw = cor([p_gold[:,2:end]...],[p[:,2:end]...])
+     @inbounds coralpha = cor(p_gold[:,1],p[:,1])
+     @inbounds corw = cor([p_gold[:,2:end]...],[p[:,2:end]...])
      return coralpha, corw
  end
 
 function cellbox!(du, u, p, t)
-    du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
+    @inbounds du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
 end
 
 tspan = (0, tfinal);
@@ -77,7 +77,7 @@ yscale = maximum(hcat(yscale_list...), dims=2);
 
 function predict_neuralode(u0, p, i_exp=1, batch=ntotal)
     global μ = μ_list[i_exp, 1:ns]
-    _prob = remake(prob, p=p, tspan=[0, ts[batch]])
+    @inbounds _prob = remake(prob, p=p, tspan=[0, ts[batch]])
     pred = Array(solve(_prob, Tsit5(), saveat=ts[1:batch],
                  sensealg=InterpolatingAdjoint()))
     return pred
@@ -86,7 +86,7 @@ predict_neuralode(u0, p, 1);
 
 function loss_neuralode(p, i_exp=1, batch=ntotal)
     pred = predict_neuralode(u0, p, i_exp, batch)
-    loss = mae(@views(ode_data_list[i_exp, :, 1:batch]), pred)
+    @inbounds loss = mae(@views(ode_data_list[i_exp, :, 1:batch]), pred)
     return loss
 end
 @show loss_neuralode(p, 1);
