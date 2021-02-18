@@ -22,7 +22,7 @@ if parsed_args["expr_name"] != nothing
 else
     runtime = YAML.load_file("./runtime.yaml")
     expr_name = runtime["expr_name"]
-    is_restart = Bool(runtime["is_restart"]
+    is_restart = Bool(runtime["is_restart"])
 end
 conf = YAML.load_file("$expr_name/config.yaml")
 
