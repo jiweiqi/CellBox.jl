@@ -3,7 +3,7 @@ using ArgParse
 using YAML
 
 s = ArgParseSettings()
-@add_arg_table s begin
+@add_arg_table! s begin
     "--disable-display"
         help = "Use for UNIX server"
         action = :store_true
