@@ -1,4 +1,3 @@
-is_restart: false
 network: "beeline_networks/Synthetic_LI.csv"
 ns: 7
 
