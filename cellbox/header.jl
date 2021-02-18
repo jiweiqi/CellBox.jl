@@ -39,6 +39,8 @@ using Distributions
 using StatsBase
 using LatinHypercubeSampling
 using BSON: @save, @load
+using CSV
+using DataFrames
 
 cd(dirname(@__DIR__))
 ENV["GKSwstype"] = "100"
