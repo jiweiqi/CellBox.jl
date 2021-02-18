@@ -1,4 +1,7 @@
+### Parsing config
 using ArgParse
+using YAML
+
 s = ArgParseSettings()
 @add_arg_table s begin
     "--disable-display"
@@ -6,21 +9,24 @@ s = ArgParseSettings()
         action = :store_true
     "--expr_name"
         help = "Define expr name"
-        required = true
+        required = false
     "--is-restart"
         help = "Continue training?"
         action = :store_true
 end
 parsed_args = parse_args(ARGS, s)
-expr_name = parsed_args["expr_name"]
-is_restart = parsed_args["is-restart"]
-if is_restart
-    println("Continue to run $expr_name ...\n")
+
+if parsed_args["expr_name"] != nothing
+    expr_name = parsed_args["expr_name"]
 else
-    println("Runing $expr_name ...\n")
+    runtime = YAML.load_file("./runtime.yaml")
+    expr_name = runtime["expr_name"]
 end
+is_restart = parsed_args["is-restart"] | Bool(runtime["is_restart"])
+conf = YAML.load_file("$expr_name/config.yaml")
 
 
+## Prepare for working env
 using OrdinaryDiffEq, Flux, Optim, Random, Plots
 using DiffEqSensitivity
 using Zygote
@@ -33,10 +39,19 @@ using Distributions
 using StatsBase
 using LatinHypercubeSampling
 using BSON: @save, @load
-using YAML
 
 cd(dirname(@__DIR__))
-conf = YAML.load_file("$expr_name/config.yaml")
+ENV["GKSwstype"] = "100"
+fig_path = string("./results/", expr_name, "/figs")
+ckpt_path = string("./results/", expr_name, "/checkpoint")
+config_path = "./results/$expr_name/config.yaml"
+
+if is_restart
+    println("Continue to run $expr_name ...\n")
+else
+    println("Runing $expr_name ...\n")
+end
+
 fig_path = string(expr_name, "/figs")
 ckpt_path = string(expr_name, "/checkpoint")
 
@@ -48,7 +63,6 @@ if !is_restart
         rm(ckpt_path, recursive=true)
     end
 end
-
 
 if ispath(fig_path) == false
     mkdir(fig_path)
