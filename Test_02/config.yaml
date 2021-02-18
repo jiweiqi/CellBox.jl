@@ -1,28 +1,27 @@
-is_restart: false
 network: "beeline_networks/Synthetic_LI.csv"
 ns: 7
 
 tfinal: 20.0
 ntotal: 20
-batch_size: 8
+batch_size: 16
 epoch_size: -1
 
-lr: 1.e-2
-weight_decay: 1.e-4
+lr: 5.e-3
+weight_decay: 1.e-5
 
 n_mu: 3
 
-n_exp_train: 256
-n_exp_val: 20
-n_exp_test: 20
+n_exp_train: 5
+n_exp_val: 5
+n_exp_test: 5
 noise: 0.01
 
-n_iter_max: 10
+n_iter_max: 100000
 n_plot: 20 # frequency of callback
 
 n_iter_buffer: 50
 n_iter_burnin: 100
-n_iter_tol: 10
+n_iter_tol: 10000
 convergence_tol: 1e-8
 
 drop_range:
