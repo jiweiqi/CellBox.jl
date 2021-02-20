@@ -2,10 +2,12 @@ cbi = function (p, i_exp)
     ode_data = ode_data_list[i_exp, :, :]
     _ts = 0:ts[end]/nplot:ts[end]
     pred = predict_neuralode(u0, p, i_exp, nothing, false)
+    gold = predict_neuralode(u0, p_gold, i_exp, nothing, false)
     l_plt = []
     for i in 1:minimum([10, ns])
-        plt = scatter(ts, ode_data[i,:], label="data");
-        plot!(plt, _ts, pred[i,:], label="pred");
+        plt = scatter(ts, ode_data[i,:], label="Data");
+        plot!(plt, _ts, pred[i,:], label="Prediction");
+        plot!(plt, _ts, gold[i,:], label="Ground truth");
         ylabel!(plt, "x$i")
         xlabel!(plt, "Time")
         push!(l_plt, plt)
