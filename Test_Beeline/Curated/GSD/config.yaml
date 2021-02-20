@@ -1,0 +1,26 @@
+network: "beeline_networks/Curated_GSD.csv"
+ns: 19
+
+tfinal: 20.0
+ntotal: 1
+nplot: 100
+batch_size: 1
+epoch_size: -1
+
+lr: 1.e-3
+weight_decay: 1.e-4
+
+n_mu: 2
+
+n_exp_train: 10
+n_exp_val: 2
+n_exp_test: 2
+noise: 0.1
+
+n_iter_max: 100
+n_plot: 20 # frequency of callback
+
+n_iter_buffer: 10
+n_iter_burnin: 10
+n_iter_tol: 50
+convergence_tol: 1e-8

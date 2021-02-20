@@ -24,7 +24,6 @@ docs/site/
 Manifest.toml
 
 # Export outputs for CellBox
-figs/
-checkpoint/
-*/*/*
-.DS_Store
+*figs
+*checkpoint/
+*.DS_Store
