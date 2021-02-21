@@ -43,8 +43,8 @@ end
 include("network.jl")
 include("callback.jl")
 
-if is_restart && (conf["lr_new"] > 0)
-    opt[1].eta = Float64(conf["lr_new"])
-end
-
+# if is_restart && (conf["lr_new"] > 0)
+#     opt[1].eta = Float64(conf["lr_new"])
+# end
+opt = ADAMW(Float64(conf["lr"]), (0.9, 0.999), Float64(conf["weight_decay"]));
 include("train.jl")
