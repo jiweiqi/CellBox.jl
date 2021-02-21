@@ -21,7 +21,13 @@ n_iter_burnin = Int64(conf["n_iter_burnin"])
 n_iter_tol = Int64(conf["n_iter_tol"])
 convergence_tol = Float64(conf["convergence_tol"])
 
-Random.seed!(1);
+if haskey(conf, "grad_max")
+    grad_max = conf["grad_max"]
+else
+    grad_max = Inf
+end
+
+# Random.seed!(1);
 
 # Generate data sets
 # μ_list = rand(n_exp, ns);  #random sampling

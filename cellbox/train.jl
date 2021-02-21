@@ -13,6 +13,9 @@ for epoch in epochs
         batch = rand(batch_size:ntotal)
         grad = Zygote.gradient(x -> loss_neuralode(x, i_exp, batch), p)[1]
         grad_norm[i_exp] = norm(grad, 2)
+        if grad_norm[i_exp] > grad_max
+            grad = grad ./ grad_norm[i_exp] .* grad_max
+        end
         update!(opt, p, grad)
     end
     for i_exp in 1:n_exp
@@ -28,8 +31,10 @@ for epoch in epochs
                             loss_train, no_change, n_iter_tol, opt[1].eta)))
     cb(p, loss_train, loss_val, loss_test, g_norm, loss_p);
 
-    if checkconvergence()
-        break
+    if n_iter_buffer > 0
+        if checkconvergence()
+            break
+        end
     end
 end
 
