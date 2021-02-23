@@ -53,14 +53,27 @@ function loss_network(p)
  end
 
 function cellbox!(du, u, p, t)
-    @inbounds du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
+ @inbounds du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
+end
+
+function cellbox!(du, u, h, p, t) # for DDE
+ @inbounds du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
 end
 
 tspan = (0, tfinal);
 ts = 0:tspan[2]/ntotal:tspan[2];
 ts = ts[2:end];
 u0 = zeros(ns);
-prob = ODEProblem(cellbox!, u0, tspan, saveat=ts);
+
+if "latency" in keys(conf)
+    hf(p,t) = ones(ns)
+    solver = MethodOfSteps(Tsit5())
+    prob = DDEProblem(cellbox!, u0, hf, tspan, saveat=ts, constant_lags=[conf["latency"]]);
+else
+    solver = Tsit5()
+    prob = ODEProblem(cellbox!, u0, tspan, saveat=ts);
+
+end
 
 function max_min(ode_data)
     return maximum(ode_data, dims=2) .- minimum(ode_data, dims=2)
@@ -70,8 +83,7 @@ ode_data_list = zeros(Float64, (n_exp, ns, ntotal));
 yscale_list = [];
 for i = 1:n_exp
     global μ = μ_list[i, 1:ns]
-    ode_data = Array(solve(prob, Tsit5(), u0=u0, p=p_gold))
-
+    ode_data = Array(solve(prob, solver, u0=u0, p=p_gold))
     ode_data += randn(size(ode_data)) .* noise
     ode_data_list[i, :, :] = ode_data
 
@@ -83,11 +95,11 @@ function predict_neuralode(u0, p, i_exp=1, batch=ntotal, saveat=true)
     global μ = μ_list[i_exp, 1:ns]
     if saveat
         @inbounds _prob = remake(prob, p=p, tspan=[0, ts[batch]])
-        pred = Array(solve(_prob, Tsit5(), saveat=ts[1:batch],
+        pred = Array(solve(_prob, solver, saveat=ts[1:batch],
                      sensealg=InterpolatingAdjoint()))
     else # for full trajectory plotting
         @inbounds _prob = remake(prob, p=p, tspan=[0, ts[end]])
-        pred = Array(solve(_prob, Tsit5(), saveat=0:ts[end]/nplot:ts[end]))
+        pred = Array(solve(_prob, solver, saveat=0:ts[end]/nplot:ts[end]))
     end
     return pred
 end

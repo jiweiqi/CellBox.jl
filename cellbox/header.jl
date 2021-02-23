@@ -29,7 +29,8 @@ conf = YAML.load_file("$expr_name/config.yaml")
 
 ## Prepare for working env
 using OrdinaryDiffEq, Flux, Optim, Random, Plots
-using DiffEqSensitivity
+using DiffEqSensitivity, DifferentialEquations
+using DelayDiffEq
 using Zygote
 using ForwardDiff
 using LinearAlgebra, Statistics
