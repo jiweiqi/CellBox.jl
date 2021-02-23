@@ -2,27 +2,27 @@ network: "beeline_networks/Curated_mCAD.csv"
 ns: 5
 
 tfinal: 20.0
-ntotal: 100
+ntotal: 5
 nplot: 100
-batch_size: 32
-epoch_size: -1
+batch_size: 5
+epoch_size: 4
 
 lr: 1.e-3
 lr_new: -1
-weight_decay: 1.e-4
+weight_decay: 1.e-10
 grad_max: 1.e-0
 
-n_mu: 5
+n_mu: 1
 
-n_exp_train: 70
-n_exp_val: 15
-n_exp_test: 15
-noise: 0.01
+n_exp_train: 10
+n_exp_val: 10
+n_exp_test: 10
+noise: 0.001
 
 n_iter_max: 10000
 n_plot: 20 # frequency of callback
 
-n_iter_buffer: -1
-n_iter_burnin: 10
-n_iter_tol: 50
-convergence_tol: 1e-30
+n_iter_buffer: 50
+n_iter_burnin: 100
+n_iter_tol: 100
+convergence_tol: 1e-8
