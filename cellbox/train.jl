@@ -31,7 +31,7 @@ for epoch in epochs
                             loss_train, no_change, n_iter_tol, opt[1].eta)))
     cb(p, loss_train, loss_val, loss_test, g_norm, loss_p);
 
-    if n_iter_buffer > 0
+    if n_iter_tol > 0
         if checkconvergence()
             break
         end
@@ -39,7 +39,7 @@ for epoch in epochs
 end
 
 if !parsed_args["disable-display"]
-    for i_exp in 1:n_exp
+    for i_exp in n_exp_train:n_exp
         cbi(p, i_exp)
     end
 

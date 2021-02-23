@@ -23,7 +23,11 @@ if "network" in keys(conf)
     w = convert(Matrix, df[:,2:end])
     @assert size(w)[1] == size(w)[2]
     @assert size(w)[1] == ns
-    α = ones(ns)
+    if "randomize_network" in keys(conf)
+        w_rand = rand(Normal(1, conf["randomize_network"]), (ns, ns))
+        w = w .* w_rand
+    end
+    α = ones(ns) .* 0.2
     p_gold = hcat(α, w)
 else
     p_gold = gen_network(ns, weight_params=(-1.0, 1.0),
