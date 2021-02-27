@@ -20,6 +20,7 @@ end
 
 if "network" in keys(conf)
     df = DataFrame(CSV.File(conf["network"]))
+    nodes = names(df)
     w = convert(Matrix, df[:,2:end])
     @assert size(w)[1] == size(w)[2]
     @assert size(w)[1] == ns
@@ -27,7 +28,11 @@ if "network" in keys(conf)
         w_rand = rand(Normal(1, conf["randomize_network"]), (ns, ns))
         w = w .* w_rand
     end
-    α = ones(ns) .* 0.2
+    if "alpha" in keys(conf)
+        α = ones(ns) .* conf["alpha"]
+    else
+        α = ones(ns) .* 0.2
+    end
     p_gold = hcat(α, w)
 else
     p_gold = gen_network(ns, weight_params=(-1.0, 1.0),

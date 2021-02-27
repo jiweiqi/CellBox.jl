@@ -37,14 +37,3 @@ for epoch in epochs
         end
     end
 end
-
-if !parsed_args["disable-display"]
-    for i_exp in n_exp_train:n_exp
-        cbi(p, i_exp)
-    end
-
-    if ispath(string(fig_path, "/p_inference_iter_tracking.png"))
-        rm(string(fig_path, "/p_inference_iter_tracking.png"))
-    end
-    cbp(p, iter)
-end
