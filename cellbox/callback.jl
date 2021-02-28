@@ -23,15 +23,15 @@ cbi! = function (p, i_exp)
     pred = predict_neuralode(u0, p, i_exp, nothing, false)
     gold = predict_neuralode(u0, p_gold, i_exp, nothing, false)
     plt = plot(size=(500, 300), legend=:right)
-    ylabel!(plt, "Proteins")
+    ylabel!(plt, "Protein levels")
     xlabel!(plt, "Time")
-    plot!(plt, _ts, gold[1,:], label="Ground truth", color=palette(:tab10)[1]);
+    plot!(plt, _ts, gold[1,:], line=:dash, label="Ground truth", color=palette(:tab10)[1]);
     scatter!(plt, ts, ode_data[1,:], label="Data", color=palette(:tab10)[1]);
-    plot!(plt, _ts, pred[1,:], line=:dash, label="Prediction", color=palette(:tab10)[1]);
+    plot!(plt, _ts, pred[1,:], label="Prediction", color=palette(:tab10)[1]);
     for i in 2:minimum([5, ns])
+        plot!(plt, _ts, gold[i,:], line=:dash, label=nothing, color=palette(:tab10)[i]);
         scatter!(plt, ts, ode_data[i,:], label=nothing, color=palette(:tab10)[i]);
         plot!(plt, _ts, pred[i,:], label=nothing, color=palette(:tab10)[i]);
-        plot!(plt, _ts, gold[i,:], label=nothing, color=palette(:tab10)[i]);
     end
     png(plt, string(fig_path, "/trajectories_cond_", i_exp, ".png"))
 end
