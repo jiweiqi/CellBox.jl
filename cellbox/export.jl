@@ -37,7 +37,7 @@ end
 
 # Joint figure
 if !parsed_args["disable-display"]
-    pick_idx = 110
+    pick_idx = n_exp
     plt = plot(size=(360, 320), legend=:right, leftmargin=40px, rightmargin=40px)
     cbi!(p, pick_idx, plt)
     title!("ODE trajectory")
