@@ -40,6 +40,6 @@ end
 
 if !parsed_args["disable-display"]
     for i_exp in n_exp_train:n_exp
-        cbi(p, i_exp)
+        @suppress_err cbi(p, i_exp)
     end
 end
