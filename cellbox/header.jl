@@ -43,12 +43,15 @@ using BSON: @save, @load
 using CSV
 using DataFrames
 using DelimitedFiles
+using Plots.PlotMeasures
+using Suppressor
 
 cd(dirname(@__DIR__))
 ENV["GKSwstype"] = "100"
 fig_path = string("./results/", expr_name, "/figs")
 ckpt_path = string("./results/", expr_name, "/checkpoint")
 config_path = "./results/$expr_name/config.yaml"
+pyplot()
 
 if is_restart
     println("Continue to run $expr_name ...\n")

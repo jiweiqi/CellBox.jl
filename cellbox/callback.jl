@@ -17,12 +17,11 @@ cbi = function (p, i_exp)
     return false
 end
 
-cbi! = function (p, i_exp)
+cbi! = function (p, i_exp, plt)
     ode_data = ode_data_list[i_exp, :, :]
     _ts = 0:ts[end]/nplot:ts[end]
     pred = predict_neuralode(u0, p, i_exp, nothing, false)
     gold = predict_neuralode(u0, p_gold, i_exp, nothing, false)
-    plt = plot(size=(500, 300), legend=:right)
     ylabel!(plt, "Protein levels")
     xlabel!(plt, "Time")
     plot!(plt, _ts, gold[1,:], line=:dash, label="Ground truth", color=palette(:tab10)[1]);
@@ -40,8 +39,6 @@ cbp = function (p, iter)
     plt_alpha = scatter(p_gold[:,1],p[:,1])
     xlabel!("ground truth alpha")
     ylabel!("inferred alpha")
-    xlims!(0.5, 1.5)
-    ylims!(0.5, 1.5)
     plt_w = scatter([p_gold[:,2:end]...],[p[:,2:end]...])
     xlabel!("ground truth w")
     ylabel!("inferred w")
@@ -68,7 +65,7 @@ cb = function (p, loss_train, loss_val, loss_test, g_norm, loss_p)
     push!(l_grad, g_norm)
     @save string(ckpt_path, "/mymodel.bson") p opt l_loss_train l_loss_val l_loss_test l_grad l_loss_network iter
 
-    if (iter % n_plot == 0)
+    @suppress_err if (iter % n_plot == 0)
         if parsed_args["disable-display"]
             println([iter loss_train loss_val loss_test g_norm loss_p])
         else

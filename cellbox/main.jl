@@ -45,4 +45,4 @@ include("callback.jl")
 
 opt = ADAMW(Float64(conf["lr"]), (0.9, 0.999), Float64(conf["weight_decay"]));
 include("train.jl")
-include("export.jl")
+@suppress_err include("export.jl")
