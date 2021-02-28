@@ -17,9 +17,9 @@ n_mu: 2
 n_exp_train: 100
 n_exp_val: 10
 n_exp_test: 10
-noise: 0.001
+noise: 0.01
 
-n_iter_max: 10000
+n_iter_max: 2000
 n_plot: 20 # frequency of callback
 
 n_iter_buffer: 50

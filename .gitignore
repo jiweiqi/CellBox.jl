@@ -24,6 +24,8 @@ docs/site/
 Manifest.toml
 
 # Export outputs for CellBox
-*figs*
+Test_*/**/figs/*
+!*merged.png
+*figs_*
 *checkpoint/
 *.DS_Store

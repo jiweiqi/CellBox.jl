@@ -1,14 +1,14 @@
-network: "beeline_networks/Synthetic_CY_new.csv"
+network: "beeline_networks/Synthetic_CY.csv"
 ns: 6
-
+alpha: 1.0
 tfinal: 20.0
-ntotal: 10
+ntotal: 5
 nplot: 100
 batch_size: 5
 epoch_size: -1
 
-lr: 1.e-3
-weight_decay: 1.e-12
+lr: 1.e-4
+weight_decay: 1.e-8
 
 n_mu: 2
 
@@ -22,5 +22,5 @@ n_plot: 20 # frequency of callback
 
 n_iter_buffer: 50
 n_iter_burnin: 100
-n_iter_tol: 1000
+n_iter_tol: 100
 convergence_tol: 1e-8
