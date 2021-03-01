@@ -12,9 +12,9 @@ weight_decay: 1.e-10
 
 n_mu: 2
 
-n_exp_train: 50
-n_exp_val: 10
-n_exp_test: 10
+n_exp_train: 20
+n_exp_val: 5
+n_exp_test: 5
 noise: 0.001
 
 n_iter_max: 10000
