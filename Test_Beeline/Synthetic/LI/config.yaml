@@ -8,12 +8,12 @@ nplot: 100
 batch_size: 5
 epoch_size: -1
 
-lr: 1.e-4
+lr: 1.e-3
 weight_decay: 1.e-4
 
 n_mu: 2
 
-n_exp_train: 10
+n_exp_train: 20
 n_exp_val: 5
 n_exp_test: 5
 noise: 0.01
