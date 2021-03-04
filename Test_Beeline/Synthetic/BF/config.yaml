@@ -6,14 +6,14 @@ tfinal: 20.0
 ntotal: 5
 nplot: 100
 batch_size: 5
-epoch_size: -1
+epoch_size: 10
 
-lr: 1.e-4
-weight_decay: 1.e-6
+lr: 5.e-4
+weight_decay: 1.e-8
 
 n_mu: 2
 
-n_exp_train: 20
+n_exp_train: 50
 n_exp_val: 5
 n_exp_test: 5
 noise: 0.01
