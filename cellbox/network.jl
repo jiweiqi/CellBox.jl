@@ -1,3 +1,12 @@
+# Random.seed!(1);
+μ_list = randomLHC(n_exp, ns) ./ n_exp;
+nμ = Int64(conf["n_mu"])
+for i = 1:n_exp
+    nonzeros = findall(μ_list[i, :].>0)
+    ind_zero = sample(nonzeros, max(0, length(nonzeros)-nμ), replace=false)
+    μ_list[i, ind_zero] .= 0
+end
+
 function gen_network(m; weight_params=(-1., 1.), sparsity=0., drop_range=(-1e-1, 1e-1))
 
     # uniform random for W matrix
@@ -55,7 +64,7 @@ function loss_network(p)
      @inbounds coralpha = cor(p_gold[:,1],p[:,1])
      @inbounds corw = cor([p_gold[:,2:end]...],[p[:,2:end]...])
      return coralpha, corw
- end
+end
 
 function cellbox!(du, u, p, t)
     @inbounds du .= @view(p[:, 1]) .* tanh.(@view(p[:, 2:end]) * u - μ) .- u
