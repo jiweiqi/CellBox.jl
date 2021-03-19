@@ -6,10 +6,9 @@ for epoch in epochs
     if conf["epoch_size"] != -1
         epoch_samples = sample(1:n_exp_train, conf["epoch_size"], replace=false)
     else
-        epoch_samples = 1:n_exp_train
+        epoch_samples = sample(1:n_exp_train, n_exp_train, replace=false)
     end
     for i_exp in epoch_samples
-    # for i_exp in randperm(n_exp_train)
         batch = rand(batch_size:ntotal)
         grad = Zygote.gradient(x -> loss_neuralode(x, i_exp, batch), p)[1]
         grad_norm[i_exp] = norm(grad, 2)
@@ -25,11 +24,10 @@ for epoch in epochs
     loss_val = mean(loss_epoch[n_exp_train+1 : n_exp_train+n_exp_val]);
     loss_test = mean(loss_epoch[n_exp_train+n_exp_val+1:end]);
     g_norm = mean(grad_norm)
-    loss_p = loss_network(p)
 
     set_description(epochs, string(@sprintf("Loss train %.4e tol %d/%d lr %.1e",
                             loss_train, no_change, n_iter_tol, opt[1].eta)))
-    cb(p, loss_train, loss_val, loss_test, g_norm, loss_p);
+    cb(p, loss_train, loss_val, loss_test, g_norm);
 
     if n_iter_tol > 0
         if checkconvergence()
