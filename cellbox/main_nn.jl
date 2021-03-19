@@ -1,7 +1,7 @@
 include("header.jl")
 
 # Random.seed!(1);
-μ_list = randomLHC(n_exp, ns) ./ n_exp;  # random LHS sampling
+μ_list = randomLHC(n_exp, ns) ./ n_exp;
 nμ = Int64(conf["n_mu"])
 for i = 1:n_exp
     nonzeros = findall(μ_list[i, :].>0)
