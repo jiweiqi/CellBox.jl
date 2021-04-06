@@ -8,6 +8,11 @@ if !parsed_args["disable-display"]
     cbp(p, iter)
 end
 
+if "data" in keys(conf)
+    cbrd(p)
+end
+
+
 # Plot for each conditions
 if !parsed_args["disable-display"]
    for i in n_exp-2:n_exp

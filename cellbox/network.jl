@@ -1,10 +1,16 @@
 # Random.seed!(1);
-μ_list = randomLHC(n_exp, ns) ./ n_exp;
-nμ = Int64(conf["n_mu"])
-for i = 1:n_exp
-    nonzeros = findall(μ_list[i, :].>0)
-    ind_zero = sample(nonzeros, max(0, length(nonzeros)-nμ), replace=false)
-    μ_list[i, ind_zero] .= 0
+if "data" in keys(conf)
+    idx_order = randperm(n_exp)
+    pert = DataFrame(CSV.File(string(conf["data"],"/pert.csv"); header=false))
+    μ_list = convert(Matrix,pert)[idx_order,:]
+else
+    μ_list = randomLHC(n_exp, ns) ./ n_exp;
+    nμ = Int64(conf["n_mu"])
+    for i = 1:n_exp
+        nonzeros = findall(μ_list[i, :].>0)
+        ind_zero = sample(nonzeros, max(0, length(nonzeros)-nμ), replace=false)
+        μ_list[i, ind_zero] .= 0
+    end
 end
 
 function gen_network(m; weight_params=(-1., 1.), sparsity=0., drop_range=(-1e-1, 1e-1))
@@ -43,6 +49,8 @@ if "network" in keys(conf)
         α = ones(ns) .* 0.2
     end
     p_gold = hcat(α, w)
+elseif "data" in keys(conf)
+    p_gold = hcat(ones(ns),zeros(ns,ns))
 else
     p_gold = gen_network(ns, weight_params=(-1.0, 1.0),
                          sparsity=Float64(conf["sparsity"]),
@@ -80,18 +88,24 @@ function max_min(ode_data)
     return maximum(ode_data, dims=2) .- minimum(ode_data, dims=2)
 end
 
-ode_data_list = zeros(Float64, (n_exp, ns, ntotal));
-yscale_list = [];
-for i = 1:n_exp
-    global μ = μ_list[i, 1:ns]
-    ode_data = Array(solve(prob, Tsit5(), u0=u0, p=p_gold))
+if "data" in keys(conf)
+    expr = DataFrame(CSV.File(string(conf["data"],"/expr.csv"); header=false))
+    ode_data_list = zeros(Float64, (n_exp, ns, ntotal));
+    ode_data_list[:,:,1] = convert(Matrix,expr)[idx_order,:]
+else
+    ode_data_list = zeros(Float64, (n_exp, ns, ntotal));
+    yscale_list = [];
+    for i = 1:n_exp
+        global μ = μ_list[i, 1:ns]
+        ode_data = Array(solve(prob, Tsit5(), u0=u0, p=p_gold))
 
-    ode_data += randn(size(ode_data)) .* noise
-    ode_data_list[i, :, :] = ode_data
+        ode_data += randn(size(ode_data)) .* noise
+        ode_data_list[i, :, :] = ode_data
 
-    push!(yscale_list, max_min(ode_data))
+        push!(yscale_list, max_min(ode_data))
+    end
+    yscale = maximum(hcat(yscale_list...), dims=2);
 end
-yscale = maximum(hcat(yscale_list...), dims=2);
 
 function predict_neuralode(u0, p, i_exp=1, batch=ntotal, saveat=true)
     global μ = μ_list[i_exp, 1:ns]

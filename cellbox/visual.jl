@@ -35,6 +35,26 @@ cbi! = function (p, i_exp, plt)
     png(plt, string(fig_path, "/trajectories_cond_", i_exp, ".png"))
 end
 
+cbrd = function (p)
+    ode_data = ode_data_list[:,:,1]
+    pred_data = zeros(size(ode_data_list)[1:2])
+    for i_exp in 1:n_exp
+        pred = predict_neuralode(u0, p, i_exp, nothing, false)
+        pred_data[i_exp,:] = pred[:,end]
+    end
+    plt_train = Plots.scatter([ode_data[1:n_exp_train,:]...],[pred_data[1:n_exp_train,:]...])
+    xlabel!("experimental data Training set")
+    ylabel!("predicted data")
+    plt_val = Plots.scatter([ode_data[(n_exp_train+1):(n_exp_train+n_exp_val),:]...],[pred_data[(n_exp_train+1):(n_exp_train+n_exp_val),:]...])
+    xlabel!("experimental data Validation set")
+    ylabel!("predicted data")
+    plt_test = Plots.scatter([ode_data[(n_exp-n_exp_test+1):end,:]...],[pred_data[(n_exp-n_exp_test+1):end,:]...])
+    xlabel!("experimental data Test set")
+    ylabel!("predicted data")
+    plt_p = plot([plt_train, plt_val, plt_test]..., legend=false, layout = grid(1, 3), size=(1300, 400))
+    png(plt_p, string(fig_path, "/predicted_response_correlation_with_real_data.png"))
+end
+
 cbp = function (p, iter)
     plt_alpha = Plots.scatter(p_gold[:,1],p[:,1])
     xlabel!("ground truth alpha")
