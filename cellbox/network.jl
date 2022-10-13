@@ -2,7 +2,7 @@
 if "data" in keys(conf)
     idx_order = randperm(n_exp)
     pert = DataFrame(CSV.File(string(conf["data"],"/pert.csv"); header=false))
-    μ_list = convert(Matrix,pert)[idx_order,:]
+    μ_list = Matrix(pert)[idx_order,:]
 else
     μ_list = randomLHC(n_exp, ns) ./ n_exp;
     nμ = Int64(conf["n_mu"])
@@ -36,7 +36,7 @@ end
 if "network" in keys(conf)
     df = DataFrame(CSV.File(conf["network"]))
     nodes = names(df)
-    w = convert(Matrix, df[:,2:end])
+    w = Matrix(df[:,2:end])
     @assert size(w)[1] == size(w)[2]
     @assert size(w)[1] == ns
     if "randomize_network" in keys(conf)
@@ -91,7 +91,7 @@ end
 if "data" in keys(conf)
     expr = DataFrame(CSV.File(string(conf["data"],"/expr.csv"); header=false))
     ode_data_list = zeros(Float64, (n_exp, ns, ntotal));
-    ode_data_list[:,:,1] = convert(Matrix,expr)[idx_order,:]
+    ode_data_list[:,:,1] = Matrix(expr)[idx_order,:]
 else
     ode_data_list = zeros(Float64, (n_exp, ns, ntotal));
     yscale_list = [];
